@@ -7,21 +7,19 @@
 
 using namespace std;
 
-void bfs(vector<vector<int>>& graphMatrix, vector<bool>& used) {
+void bfs(vector<vector<int>> &graphMatrix, vector<int> &used, int startPoint, int &index) {
     queue<int> q;
-    q.push(0);
-    used[0] = true;
+    used[startPoint] = index++;
+    q.push(startPoint);
 
     while (!q.empty()) {
         int curNode = q.front();
         q.pop();
 
-        cout << curNode + 1 << " ";
-
-        for (int neighborNode = 0; neighborNode < graphMatrix.size(); ++neighborNode) {
-            if (graphMatrix[curNode][neighborNode] == 1 && !used[neighborNode]) {
+        for (int neighborNode: graphMatrix[curNode]) {
+            if (used[neighborNode] == -1) {
                 q.push(neighborNode);
-                used[neighborNode] = true;
+                used[neighborNode] = index++;
             }
         }
     }
@@ -36,14 +34,30 @@ int32_t main() {
     int n;
     cin >> n;
 
-    vector<vector<int>> graphMatrix(n, vector<int>(n, 0));
-    vector<bool> used(n, false);
+    vector<vector<int>> graphMatrix(n);
+    vector<int> used(n, -1);
 
-    for (int i = 0; i < n; ++i)
-        for (int j = 0; j < n; ++j)
-            cin >> graphMatrix[i][j];
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            int edge;
+            cin >> edge;
 
-    bfs(graphMatrix, used);
+            if (edge == 1) {
+                graphMatrix[i].push_back(j);
+            }
+        }
+    }
+
+    int idx = 1;
+    for (int i = 0; i < n; i++) {
+        if (used[i] == -1) {
+            bfs(graphMatrix, used, i, idx);
+        }
+    }
+
+    for (int num_of_node: used) {
+        cout << num_of_node << " ";
+    }
 
     return 0;
 }
